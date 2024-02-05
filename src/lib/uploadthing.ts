@@ -5,14 +5,12 @@ import {
 } from "@uploadthing/react";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 
-import { OurFilerouter } from "@/app/api/uploadthing/core";
+import { OurFileRouter } from "@/app/api/uploadthing/core";
 
-// export const { UploadButton, UploadDropzone, Uploader } =
-//   generateComponents<OurFilerouter>();
-const UploadButton = generateUploadButton<OurFilerouter>();
-const UploadDropzone = generateUploadDropzone<OurFilerouter>();
-const Uploader = generateUploader<OurFilerouter>();
+const UploadButton = generateUploadButton<OurFileRouter>();
+const UploadDropzone = generateUploadDropzone<OurFileRouter>();
+const Uploader = generateUploader<OurFileRouter>();
 export { UploadButton, UploadDropzone, Uploader };
 
 export const { useUploadThing, uploadFiles } =
-  generateReactHelpers<OurFilerouter>();
+  generateReactHelpers<OurFileRouter>();
