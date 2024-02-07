@@ -2,7 +2,7 @@
 
 import { clerkClient, currentUser } from "@clerk/nextjs";
 import { db } from "./db";
-import { User } from "@prisma/client";
+import { Agency, User } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 export const getAuUserDetails = async () => {
@@ -169,4 +169,28 @@ export const verifyAndAcceptInvitation = async () => {
 
     return agency ? agency.agencyId : null;
   }
+};
+
+export const updateAgencyDetails = async (
+  agencyId: string,
+  agencyDetails: Partial<Agency>
+) => {
+  const response = await db.agency.update({
+    where: {
+      id: agencyId,
+    },
+    data: {
+      ...agencyDetails,
+    },
+  });
+  return response;
+};
+
+export const deleteAgency = async (agencyId: string) => {
+  const response = await db.agency.delete({
+    where: {
+      id: agencyId,
+    },
+  });
+  return response;
 };
