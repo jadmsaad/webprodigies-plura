@@ -35,8 +35,10 @@ import { Switch } from "../ui/switch";
 import { NumberInput } from "@tremor/react";
 import {
   deleteAgency,
+  initUser,
   saveActivityLogsNotification,
   updateAgencyDetails,
+  upsertAgency,
 } from "@/lib/queries";
 import { Button } from "../ui/button";
 import Loading from "../global/loading";
@@ -46,6 +48,7 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "@radix-ui/react-alert-dialog";
+import { v4 } from "uuid";
 
 interface IAgencyDetailsProps {
   data?: Partial<Agency>;
@@ -90,7 +93,67 @@ const AgencyDetails: React.FunctionComponent<IAgencyDetailsProps> = ({
 
   const isLoading = form.formState.isSubmitting;
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async (values: z.infer<typeof FormSchema>) => {
+    try {
+      let newUserdata;
+      let customerId;
+      if (!data?.id) {
+        const { companyEmail, name, city, country, address, zipCode, state } =
+          values;
+        const userAddress = {
+          city,
+          country,
+          line1: address,
+          postal_code: zipCode,
+          state: state,
+        };
+        const bodyData = {
+          email: companyEmail,
+          name: name,
+          shipping: {
+            address: {
+              ...userAddress,
+            },
+          },
+          address: {
+            ...userAddress,
+          },
+        };
+      }
+      newUserdata = await initUser({ role: "AGENCY_OWNER" });
+
+      console.log(values.companyEmail);
+      await upsertAgency({
+        id: data?.id ? data.id : v4(),
+        customerId: data?.customerId || "",
+        address: values.address,
+        agencyLogo: values.agencyLogo,
+        city: values.city,
+        companyPhone: values.companyPhone,
+        country: values.country,
+        name: values.name,
+        state: values.state,
+        whiteLabel: values.whiteLabel,
+        zipCode: values.zipCode,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        companyEmail: values.companyEmail,
+        connectAccountId: "",
+        goal: 5,
+      });
+      console.log("A");
+      toast({
+        title: "Created Agency",
+      });
+      return router.refresh();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Oops!",
+        description: "Could not create agency",
+      });
+    }
+  };
   const handleDeleteAgency = async () => {
     if (!data?.id) {
       return;

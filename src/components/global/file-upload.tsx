@@ -25,7 +25,7 @@ const FileUpload: React.FunctionComponent<IFileUploadProps> = ({
             <Image
               src={value}
               alt="Uploaded Image"
-              className="object-container"
+              className="object-contain"
               fill
             />
           </div>
